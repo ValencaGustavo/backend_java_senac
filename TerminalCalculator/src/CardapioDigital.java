@@ -213,7 +213,7 @@ public class CardapioDigital {
                     System.out.println("[1] >> Quatro Queijos = R$25.00");
                     System.out.println("[3] >> Frango com Bacon = R$28.59");
                     System.out.println("========================"); 
-                    System.out.println("Escolha um Strogonoff:");
+                    System.out.println("Escolha uma Pizza:");
                     int cardapio1 = scanner.nextInt();
 
                     switch (cardapio1) {
