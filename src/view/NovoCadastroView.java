@@ -1,0 +1,116 @@
+package view;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import javax.swing.*;
+
+import model.MySQLConnector;
+
+public class NovoCadastroView extends JFrame {
+
+    public static final JTextField usuarioJTextField = new JTextField("");
+    public static final JTextField emailJTextField = new JTextField("");
+    public static final JTextField senhaJPasswordField = new JPasswordField("");
+
+    public static final JButton logarJButton = new JButton("Login >");
+    public static final JButton cadastrarJButton = new JButton("Concluir cadastro");
+
+    public static final JLabel usuarioJLabel = new JLabel("Digite seu nome de usuário", SwingConstants.CENTER);
+    public static final JLabel emailJLabel = new JLabel("Digite seu email", SwingConstants.CENTER);
+    public static final JLabel senhaJLabel = new JLabel("Digite sua senha", SwingConstants.CENTER);
+    public static final JLabel notificacaoJLabel = new JLabel("Notificações");
+
+    public static final JCheckBox termsJCheckBox = new JCheckBox("Você aceita os termos?");
+
+    public NovoCadastroView() {
+        super("Tela de Cadastro");
+        setLayout(new GridLayout(12, 3, 5, 5));
+
+        cadastrarJButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String nome = usuarioJTextField.getText();
+                String email = emailJTextField.getText();
+                String senha = senhaJPasswordField.getText();
+
+                if (termsJCheckBox.isSelected()) {
+                    try {
+                        Connection conexao = MySQLConnector.conectar();
+                        String strSqlPesquisarEmail = "select * from `" + dbPadrao + "`.`" + tblPadrao + "` where `email` = '" + email + "';";
+                        Statement stmSqlPesquisarEmail = conexao.createStatement();
+                        ResultSet rstPesquisarEmail = stmSqlPesquisarEmail.executeQuery(strSqlPesquisarEmail);
+
+                        if (rstPesquisarEmail.next()) {
+                            notificacaoJLabel.setText("Ops! Parece que há um cadastro com esse email. Por favor, verifique e tente novamente com outro email.");
+                        } else {
+                            NavegadorDeRegistro.cadastrar1(dbPadrao, tblPadrao, "nome", "email", "senha", nome, email, senha);
+                            dispose();
+                        }
+                        stmSqlPesquisarEmail.close();
+                        conexao.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        notificacaoJLabel.setText("Ocorreu um erro ao cadastrar. Por favor, tente novamente.");
+                    }
+                } else {
+                    notificacaoJLabel.setText("Você deve aceitar os termos para cadastrar-se.");
+                }
+            }
+        });
+
+        JPanel linha1 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha2 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha3 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha4 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha5 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha6 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha7 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha8 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha9 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha10 = new JPanel(new GridLayout(1, 2, 5, 5));
+        JPanel linha11 = new JPanel(new GridLayout(1, 3, 5, 5));
+        JPanel linha12 = new JPanel(new GridLayout(1, 3, 5, 5));
+
+        add(linha1);
+        linha2.add(usuarioJLabel);
+        add(linha2);
+        linha3.add(usuarioJTextField);
+        add(linha3);
+        linha4.add(emailJLabel);
+        add(linha4);
+        linha5.add(emailJTextField);
+        add(linha5);
+        linha6.add(senhaJLabel);
+        add(linha6);
+        linha7.add(senhaJPasswordField);
+        add(linha7);
+        add(linha8);
+        linha9.add(cadastrarJButton);
+        linha9.add(logarJButton);
+        add(linha9);
+        add(linha10);
+        linha11.add(termsJCheckBox);
+        add(linha11);
+        linha12.add(notificacaoJLabel);
+        add(linha12);
+
+        setSize(400, 600);
+        setVisible(true);
+
+        logarJButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                LoginFrameView login = new LoginFrameView();
+                login.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                login.setVisible(true);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        NovoCadastroView application = new NovoCadastroView();
+        application.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+}
